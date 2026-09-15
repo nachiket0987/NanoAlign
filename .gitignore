@@ -1,0 +1,23 @@
+# vscode
+.vscode 
+
+# design
+design
+
+# Python / uv
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# uv keeps the global cache outside the repo; only the lockfile is committed.
+# (uv.lock IS committed on purpose for reproducibility.)
+
+# Experiment artifacts
+outputs/
+wandb/
+*.ckpt
+*.pt
+*.safetensors
+trainer_output/

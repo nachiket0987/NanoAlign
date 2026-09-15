@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  nanoalign-trainer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nanoalign:latest
+    container_name: nanoalign-worker
+    environment:
+      - CUDA_VISIBLE_DEVICES=0
+      - HF_HUB_ENABLE_HF_TRANSFER=1
+      - DEBUG=False
+    volumes:
+      - ./trainer_output:/app/trainer_output
+      - ./assets:/app/assets
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+  nanoalign-dashboard:
+    image: nginx:alpine
+    container_name: nanoalign-dashboard
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./trainer_output:/usr/share/nginx/html/trainer_output:ro
+      - ./assets:/usr/share/nginx/html/assets:ro
+    depends_on:
+      - nanoalign-trainer
+    restart: unless-stopped
